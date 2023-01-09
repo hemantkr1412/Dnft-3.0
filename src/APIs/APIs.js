@@ -20,23 +20,9 @@ export const CreateIPFSuri = async(reward) =>{
     var obj = {
         properties: {
             name: "ABC HOTEL",
-            description: {
-                type: "string",
-                description: "NFT issued to authentic member of ABC Hotel"
-            },
-            "image": "https://gateway.pinata.cloud/ipfs/QmRUheYjxM4TkBNyVaDcmod554QtXSUBm1yoNAz3c1pPJ3"
-        },
-        attributes:[
-          {
-              tokenId:"0",
-              owner:"0xcdsf.....",
-              rewardDetails:{
-                reward:reward,
-                data:date
-              },
-              "redeemStatus":"Unclaimed"
-          }
-      ]
+            description:"NFT issued to authentic member of ABC Hotel",
+            image: "https://gateway.pinata.cloud/ipfs/QmRUheYjxM4TkBNyVaDcmod554QtXSUBm1yoNAz3c1pPJ3"
+        }
       }
       obj = JSON.stringify(obj)
     
