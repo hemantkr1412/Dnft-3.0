@@ -10,17 +10,26 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { CreateIPFSuri } from '../APIs/APIs';
+import {ethers} from 'ethers';
+import {contractAddress,abi} from '../common.js';
 
 
 export const Issue = () => {
-    const [memberShip,setMembership]=useState("PREMIUM");
+    const [memberShip,setMembership]=useState("REGULAR");
     const [inputDiscount,setInputDiscount] = useState("");
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
     const [value, setValue] = React.useState(null);
-    const [reward,setreward] = useState("")
+    const [reward,setreward] = useState("");
+    const [date,setDate] = useState("");
+    const [message,setMessage] = useState("");
+    const [premium,setPremium] = useState("");
 
+    //Contract Integration...
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
     const handleChange =(e) =>{
         setisReward((e.target.value))
     }
@@ -36,19 +45,61 @@ export const Issue = () => {
     const handleChangeReward = (e) =>{
         setreward(e.target.value)
     }
-    
-    const handleClickissue = () =>{
-        const res = CreateIPFSuri(reward)
-        const jsonURI = "https://bit.infura-ipfs.io/ipfs/"+ res
-        // calll API
+    // const handleChangeDate = (e) =>{
+    // }
+    const handleClickissue = async() =>{
+        const res =await CreateIPFSuri(reward);
+        console.log(res);
+        const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
+        console.warn(jsonURI);
+        if (isReward){
+            setMessage("NFT Issued,"+reward)
+        }else{
+            setMessage("NFT Issued,No reward Issue")
+        }
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Months start at 0!
+        let dd = today.getDate();
         
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        const formattedToday = dd+mm+ yyyy;
+        console.log(formattedToday)
+        setDate(formattedToday);
+        
+        if(memberShip == "REGULAR"){
+           setPremium(false)
+        }
+        else {setPremium(true)}
+
+        try {
+            const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,10012023,12012023,isReward,premium);
+            console.log(issueNFT);
+            console.log("Txn completed......")
+            
+        } catch (error) {
+            console.log(`Error Occured: ${error}`)
+        }
+    }
+    const getLog = async()=>{
+        const currentBlock = await provider.getBlockNumber();
+        const txnLogs = await contract.queryFilter("MintLog",30745296,currentBlock);
+        console.log(txnLogs);  
+        // for(let i =0;i<txnLogs.length;i++){
+        //   const argsSel = txnLogs[i].args;
+        //  const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
+        //     Txn Issue Date:${parseInt((argsSel.date._hex),16)}
+        //     Message:${argsSel.message}
+        //     Visit:${(argsSel._noOfVisit)}
+        //     Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
+        //     isRedeemed:${argsSel._isRedeemed}`
+        // console.log(txnTable);
+        // }
     }
 
-
-
-
   return (
-    <Box>
+      <Box>
         <AppBar 
         position="sticky"
         sx={{
@@ -61,6 +112,7 @@ export const Issue = () => {
             background:"white"}}
         >
             <Toolbar>
+            <button onClick={getLog}>Get Log</button>
             
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
                     <TextField label="Wallet Address" value={walletAddress.split("ethereum:")} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
@@ -68,8 +120,7 @@ export const Issue = () => {
                     onClick={(e) => {
                         setWalletAdd((e.target.value).split("ethereum:"))
                     }}
-                    >Enter Menually</Button>
-                
+                    >Enter Manually</Button>
                 </Box>
             </Toolbar>
             
@@ -80,15 +131,14 @@ export const Issue = () => {
            {walletAddress && <Box sx={{display:"flex",flexWrap:"wrap",justifyContent:"center"}}>
 
                             <>
-
                             <Card  sx={{ width:"25%",background:"white",boxShadow:"10px 5px 5px #85878c",margin:"20px",minWidth:"350px",padding:"10px"}}>
                                 <Typography variant='h5' sx={{fontWeight:"700",textAlign:"center"}}>ABC HOTEL</Typography>
                                 <Box sx={{}} >
                                     <Box sx={{marginLeft:"30px"}}>
-                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/QmV2NaqzSgqgurypqm4UQYkRDLy6g8FMmvVoUkVdAhheN1" width={400} height={400}/>
+                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/QmRUheYjxM4TkBNyVaDcmod554QtXSUBm1yoNAz3c1pPJ3" width={400} height={400}/>
                                     </Box>
                                     <Box sx={{marginLeft:"15px"}}>
-                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet Add : {walletAddress.split("ethereum:")}</Typography>
+                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress.split("ethereum:")}</Typography>
                                             <Box sx={{marginTop:"20px"}}>
                                                 <Typography color={"green"} sx={{fontWeight:"600"}}>MEMBERSHIP : </Typography>
 
