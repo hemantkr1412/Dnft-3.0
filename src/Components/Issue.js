@@ -22,9 +22,8 @@ export const Issue = () => {
     const [isReward,setisReward]=useState(false);
     const [value, setValue] = React.useState(null);
     const [reward,setreward] = useState("");
-    const [date,setDate] = useState("");
-    const [message,setMessage] = useState("");
-    const [premium,setPremium] = useState("");
+
+    
 
     //Contract Integration...
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -52,10 +51,11 @@ export const Issue = () => {
         console.log(res);
         const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
         console.warn(jsonURI);
+        var message; 
         if (isReward){
-            setMessage("NFT Issued,"+reward)
+            message= `NFT Issued, ${reward}`
         }else{
-            setMessage("NFT Issued,No reward Issue")
+            message="NFT Issued,No reward Issue";
         }
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -65,21 +65,28 @@ export const Issue = () => {
         if (dd < 10) dd = '0' + dd;
         if (mm < 10) mm = '0' + mm;
         const formattedToday = dd+mm+ yyyy;
-        console.log(formattedToday)
-        setDate(formattedToday);
+        let premium;
+        
+
         
         if(memberShip == "REGULAR"){
-           setPremium(false)
+           premium=false
         }
-        else {setPremium(true)}
+        else {premium=true}
+
+        let expdate;
+
+        
 
         try {
-            const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,10012023,12012023,isReward,premium);
-            console.log(issueNFT);
+            console.log(value)
+            // const issueNFT = await contract.safeMint(walletAddress.split("ethereum:")[0],jsonURI,message,formattedToday,12012023,isReward,premium);
+            // console.log(issueNFT);
             console.log("Txn completed......")
             
         } catch (error) {
             console.log(`Error Occured: ${error}`)
+            
         }
     }
     const getLog = async()=>{
@@ -90,13 +97,15 @@ export const Issue = () => {
         //   const argsSel = txnLogs[i].args;
         //  const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
         //     Txn Issue Date:${parseInt((argsSel.date._hex),16)}
-        //     Message:${argsSel.message}
+        //     messageage:${argsSel.messageage}
         //     Visit:${(argsSel._noOfVisit)}
         //     Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
         //     isRedeemed:${argsSel._isRedeemed}`
         // console.log(txnTable);
         // }
     }
+
+
 
   return (
       <Box>
@@ -131,7 +140,7 @@ export const Issue = () => {
            {walletAddress && <Box sx={{display:"flex",flexWrap:"wrap",justifyContent:"center"}}>
 
                             <>
-                            <Card  sx={{ width:"25%",background:"white",boxShadow:"10px 5px 5px #85878c",margin:"20px",minWidth:"350px",padding:"10px"}}>
+                            <Card  sx={{ width:"25%",background:"white",boxShadow:"10px 5px 5px #85878c",margin:"20px",minWidth:"450px",padding:"10px"}}>
                                 <Typography variant='h5' sx={{fontWeight:"700",textAlign:"center"}}>ABC HOTEL</Typography>
                                 <Box sx={{}} >
                                     <Box sx={{marginLeft:"30px"}}>
@@ -186,6 +195,7 @@ export const Issue = () => {
                                                             setValue(newValue);
                                                             }}
                                                             sx={{marginTop:"25px",marginLeft:"10px"}}
+                                                            formatDate={(date) => moment(new Date()).format('MM-DD-YYYY')}
                                                             renderInput={(params) => <TextField variant="standard" {...params} />}
                                                         />
                                                         </LocalizationProvider>
