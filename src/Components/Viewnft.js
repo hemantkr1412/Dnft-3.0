@@ -24,9 +24,10 @@ export const Viewnft = () => {
         settoken(e.target.value)
     }
     const getLog = async()=>{
+        console.log("Click")
         const currentBlock = await provider.getBlockNumber();
         const txnLogs = await contract.queryFilter("MintLog",30745296,currentBlock);
-        console.log(txnLogs);  
+        // console.log(txnLogs);  
         for(let i =0;i<txnLogs.length;i++){
             if(txnLogs[i].args._to == walletAddress){
                 console.log(txnLogs[i].args);
@@ -41,11 +42,12 @@ export const Viewnft = () => {
             }
         }
     }
+
     const rows = [
         createData("22-12-2022","Flat 50% OFF*","YES","15-01-2025"),
         createData("08-02-2023","One Night Stay Free*","NO","12-05-2026"),
         createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
-      ];
+    ];
 
   return (
    <Box>
@@ -63,7 +65,7 @@ export const Viewnft = () => {
             <Toolbar>
             
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
-                    <TextField label="Token ID" value={token} onChange={e=>setWalletAdd(e.target.value)} variant="standard" sx={{borderRadius: 10,width:"400"}} />
+                    <TextField label="Wallet Address" value={walletAddress} onChange={(e)=>setWalletAdd(e.target.value)} variant="standard" sx={{borderRadius: 10,width:"400"}} />
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={getLog}
                     >View NFT</Button>
