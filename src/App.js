@@ -72,6 +72,7 @@ import { HashRouter } from "react-router-dom";
 import { Issue } from './Components/Issue';
 import {Viewnft} from "./Components/Viewnft";
 import { Updatenft } from './Components/Updatenft';
+// import TransferOwner from './Components/transferOwner';
 const App = () => {
   return (
   <>
@@ -86,6 +87,7 @@ const App = () => {
         <Route path="/issue" element={<Issue />}/>
         <Route path="/viewnft" element={<Viewnft />}/>
         <Route path="/updatenft" element={<Updatenft />}/>
+        {/* <Route path="/src/Components/transferOwner.js" element={<TransferOwner />}/> */}
       </Routes>
     </main>
     </HashRouter>

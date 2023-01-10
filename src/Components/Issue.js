@@ -10,6 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { CreateIPFSuri } from '../APIs/APIs';
+import TransferOwner from './transferOwner';
 import {ethers} from 'ethers';
 import {contractAddress,abi} from '../common.js';
 
@@ -20,7 +21,7 @@ export const Issue = () => {
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState(null);//ddmmyyyy
     const [reward,setreward] = useState("");
     const [date,setDate] = useState("");
     const [message,setMessage] = useState("");
@@ -74,28 +75,24 @@ export const Issue = () => {
         else {setPremium(true)}
 
         try {
-            const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,10012023,12012023,isReward,premium);
-            console.log(issueNFT);
+            console.log(value);
+            // const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,10012023,12012023,isReward,premium);
+            // console.log(issueNFT);
             console.log("Txn completed......")
             
         } catch (error) {
             console.log(`Error Occured: ${error}`)
         }
     }
-    const getLog = async()=>{
-        const currentBlock = await provider.getBlockNumber();
-        const txnLogs = await contract.queryFilter("MintLog",30745296,currentBlock);
-        console.log(txnLogs);  
-        // for(let i =0;i<txnLogs.length;i++){
-        //   const argsSel = txnLogs[i].args;
-        //  const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
-        //     Txn Issue Date:${parseInt((argsSel.date._hex),16)}
-        //     Message:${argsSel.message}
-        //     Visit:${(argsSel._noOfVisit)}
-        //     Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
-        //     isRedeemed:${argsSel._isRedeemed}`
-        // console.log(txnTable);
-        // }
+  
+    const [newOwner, setNewOwner] = useState("");
+    const transferOwner= async()=>{
+          try {
+            const transfer = await contract.transferOwnership(newOwner);
+            console.log(transfer);
+          } catch (error) {
+            console.log(`Error occured ${error}`);
+          }
     }
 
   return (
@@ -112,8 +109,14 @@ export const Issue = () => {
             background:"white"}}
         >
             <Toolbar>
-            <button onClick={getLog}>Get Log</button>
-            
+            <button type="button" onClick={transferOwner}>
+        Transfer Ownership
+      </button>
+      <input
+        type="text"
+        placeholder="New Owner Address"
+        onChange={(e) => setNewOwner(e.target.value)}
+      ></input>
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
                     <TextField label="Wallet Address" value={walletAddress.split("ethereum:")} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
@@ -121,6 +124,7 @@ export const Issue = () => {
                         setWalletAdd((e.target.value).split("ethereum:"))
                     }}
                     >Enter Manually</Button>
+                    
                 </Box>
             </Toolbar>
             
