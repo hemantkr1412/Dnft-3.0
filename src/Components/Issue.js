@@ -10,6 +10,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { CreateIPFSuri } from '../APIs/APIs';
+import TransferOwner from './transferOwner';
 import {ethers} from 'ethers';
 import {contractAddress,abi} from '../common.js';
 
@@ -20,7 +21,7 @@ export const Issue = () => {
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState(null);//ddmmyyyy
     const [reward,setreward] = useState("");
 
     
@@ -75,13 +76,13 @@ export const Issue = () => {
         else {premium=true}
 
         let expdate;
-
+        expdate = String(value.$d)+String(value.$M+1)+String(value.$y)
+        console.log(expdate)
         
 
         try {
-            console.log(value)
-            // const issueNFT = await contract.safeMint(walletAddress.split("ethereum:")[0],jsonURI,message,formattedToday,12012023,isReward,premium);
-            // console.log(issueNFT);
+            const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,formattedToday,12012023,isReward,premium);
+            console.log(issueNFT);
             console.log("Txn completed......")
             
         } catch (error) {
@@ -97,7 +98,7 @@ export const Issue = () => {
         //   const argsSel = txnLogs[i].args;
         //  const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
         //     Txn Issue Date:${parseInt((argsSel.date._hex),16)}
-        //     messageage:${argsSel.messageage}
+        //     Message:${argsSel.message}
         //     Visit:${(argsSel._noOfVisit)}
         //     Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
         //     isRedeemed:${argsSel._isRedeemed}`
@@ -121,8 +122,14 @@ export const Issue = () => {
             background:"white"}}
         >
             <Toolbar>
-            <button onClick={getLog}>Get Log</button>
-            
+            {/* <button type="button" onClick={transferOwner}>
+        Transfer Ownership
+      </button> */}
+      {/* <input
+        type="text"
+        placeholder="New Owner Address"
+        onChange={(e) => setNewOwner(e.target.value)}
+      ></input> */}
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
                     <TextField label="Wallet Address" value={walletAddress.split("ethereum:")} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
@@ -130,6 +137,7 @@ export const Issue = () => {
                         setWalletAdd((e.target.value).split("ethereum:"))
                     }}
                     >Enter Manually</Button>
+                    
                 </Box>
             </Toolbar>
             
