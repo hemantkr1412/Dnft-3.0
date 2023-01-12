@@ -11,6 +11,8 @@ import ScanQR from './Scanqr';
 import {ethers} from 'ethers';
 import {contractAddress, abi} from '../common';
 
+
+
 function createData(date,reward,status,expdate) {
     return { date,reward,status,expdate };
   }
@@ -25,32 +27,50 @@ export const Viewnft = () => {
         settoken(e.target.value)
     }
 
-    const rows=[]
+    // const rows=[]
     
     const getLog = async()=>{
-        console.log("Click")
-        const currentBlock = await provider.getBlockNumber();
-        const txnLogs = await contract.queryFilter("MintLog",30745296,currentBlock);
-        console.log(txnLogs);  
-        for(let i =0;i<txnLogs.length;i++){
-            if(txnLogs[i].args._to == walletAddress){
-                console.log(txnLogs[i].args);
-                const argsSel = txnLogs[i].args;
-               const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
-                  Txn Issue Date:${parseInt((argsSel.date._hex),16)}
-                  Message:${argsSel.message}
-                  Visit:${(argsSel._noOfVisit)}
-                  Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
-                  isRedeemed:${argsSel._isRedeemed}`
-              console.log(txnTable);
-            //   const reward = (argsSel.message).slice(11)
-            //   let redeem;
-            //   argsSel._isRedeemed ? redeem ==="Yes":redeem==="No"
-            //   rows.push(createData("10-01-2023",reward,redeem,"02-05-2025"))
-            //   setIsCard(true)
+        // console.log("Click");
+        //       const reward = (argsSel.message).slice(11)
+        //       let redeem;
+        //       argsSel._isRedeemed ? redeem ==="Yes":redeem==="No"
+        //       rows.push(createData("10-01-2023",reward,redeem,"02-05-2025"))
+        //       setIsCard(true)
+
+        //     console.log("user INfo fetching.....")
+        //    const viewNFT = await contract.addressToUser(walletAddress);
+        //    console.log(viewNFT);
+        //    console.log("user Info fetched successfully....");
+
+           const rewardArrLen = await contract.getLength(walletAddress);
+           const numLen = parseInt(rewardArrLen._hex);
+           console.log(numLen);
+           let issueDate;
+           let expiryDate;
+           for(let i = 0;i<numLen;i++){
+               const rewardInfo = await contract.addressToReward(walletAddress,i);
+
+
+        /*#####################################Date Logic######################################################3 */
+               const issueInt = parseInt((rewardInfo.issueDate._hex),16)+19800;
+               const expiryInt = parseInt((rewardInfo.expiryDate._hex),16)+19800;
+               //ISSUE DATE
+                await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${issueInt}`).then(res=>res.json()).then(data=>issueDate = data);
+                
+                //EXPIRY DATE
+                await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${expiryInt}`).then(res=>res.json()).then(data=>expiryDate = data);
+        /*##################################################################################################3*/      
+                console.log(`Reward:${rewardInfo.reward}`);
+                console.log(`Issue Date:${issueDate}`);
+                console.log(`Expiry Date:${expiryDate}`);
+
+            // //  console.log(rewardInfo[1]);
             }
+           
+        // const len = await contract.getLength(walletAddress);
+        // console.log(parseInt(len))
+        
         }
-    }
 
     // const rows = [
     //     createData("22-12-2022","Flat 50% OFF*","YES","15-01-2025"),
@@ -91,7 +111,7 @@ export const Viewnft = () => {
                                 <Box sx={{marginTop:"5px"}} >
                                     <Box sx={{display:"flex",justifyContent:"center"}}>
                                         <Box>
-                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/QmRUheYjxM4TkBNyVaDcmod554QtXSUBm1yoNAz3c1pPJ3" width={400} height={400}/>
+                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/Qmb52oqVqNh7gn6ZRfaB88FdykuzMZgDttek8yeJXooX5U" width={400} height={400}/>
                                         </Box>
                                         <Box sx={{marginTop:"40px",marginLeft:"10px"}}>
                                         <Typography variant='h5' sx={{fontWeight:"700",textAlign:"center"}}>ABC HOTEL</Typography>
@@ -156,4 +176,5 @@ export const Viewnft = () => {
          </Box>
    </Box>
   )
-}
+ 
+                                                            }

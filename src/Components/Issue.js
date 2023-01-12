@@ -51,59 +51,38 @@ export const Issue = () => {
         const res =await CreateIPFSuri(reward);
         console.log(res);
         const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
-        console.warn(jsonURI);
-        var message; 
+        console.log(jsonURI);
+        let isRewarded; 
         if (isReward){
-            message= `NFT Issued, ${reward}`
+            isRewarded = true;
         }else{
-            message="NFT Issued,No reward Issue";
+            isRewarded = false;
         }
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        let mm = today.getMonth() + 1; // Months start at 0!
-        let dd = today.getDate();
-        
-        if (dd < 10) dd = '0' + dd;
-        if (mm < 10) mm = '0' + mm;
-        const formattedToday = dd+mm+ yyyy;
         let premium;
-        
-
-        
         if(memberShip == "REGULAR"){
            premium=false
         }
         else {premium=true}
 
-        let expdate;
-        expdate = String(value.$d)+String(value.$M+1)+String(value.$y)
-        console.log(expdate)
-        
+       //Date
+       let expiryDate;
+       await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${value.$y}-${value.$M+1}-${value.$D} 23:59:59`)
+       .then(res=>res.json())
+       .then(data=>{expiryDate=data-19800});
+       // unixToDate.then(data=>console.log(data));//VIEW NFT
+       
 
-        try {
-            const issueNFT = await contract.safeMint(walletAddress,jsonURI,message,formattedToday,12012023,isReward,premium);
+       try {
+         console.log("txn started")
+            const issueNFT = await contract.safeMint(walletAddress,jsonURI,isRewarded,premium,reward,expiryDate);
             console.log(issueNFT);
+            // console.log(reward);
             console.log("Txn completed......")
             
         } catch (error) {
-            console.log(`Error Occured: ${error}`)
+            console.log(error)
             
         }
-    }
-    const getLog = async()=>{
-        const currentBlock = await provider.getBlockNumber();
-        const txnLogs = await contract.queryFilter("MintLog",30745296,currentBlock);
-        console.log(txnLogs);  
-        // for(let i =0;i<txnLogs.length;i++){
-        //   const argsSel = txnLogs[i].args;
-        //  const txnTable=`Token ID :${parseInt((argsSel._tokenId._hex),16)}
-        //     Txn Issue Date:${parseInt((argsSel.date._hex),16)}
-        //     Message:${argsSel.message}
-        //     Visit:${(argsSel._noOfVisit)}
-        //     Expiry Date:${parseInt((argsSel.expiryDate._hex),16)}
-        //     isRedeemed:${argsSel._isRedeemed}`
-        // console.log(txnTable);
-        // }
     }
 
 
@@ -152,7 +131,7 @@ export const Issue = () => {
                                 <Typography variant='h5' sx={{fontWeight:"700",textAlign:"center"}}>ABC HOTEL</Typography>
                                 <Box sx={{}} >
                                     <Box sx={{marginLeft:"30px"}}>
-                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/QmRUheYjxM4TkBNyVaDcmod554QtXSUBm1yoNAz3c1pPJ3" width={400} height={400}/>
+                                        <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/Qmb52oqVqNh7gn6ZRfaB88FdykuzMZgDttek8yeJXooX5U" width={400} height={400}/>
                                     </Box>
                                     <Box sx={{marginLeft:"15px"}}>
                                         <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress.split("ethereum:")}</Typography>
