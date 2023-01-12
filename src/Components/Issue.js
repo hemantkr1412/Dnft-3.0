@@ -13,7 +13,9 @@ import { CreateIPFSuri } from '../APIs/APIs';
 import TransferOwner from './transferOwner';
 import {ethers} from 'ethers';
 import {contractAddress,abi} from '../common.js';
-
+import {TailSpin} from "react-loader-spinner";
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 export const Issue = () => {
     const [memberShip,setMembership]=useState("REGULAR");
@@ -21,8 +23,10 @@ export const Issue = () => {
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
-    const [value, setValue] = React.useState(null);//ddmmyyyy
+    
+    //ddmmyyyy
     const [reward,setreward] = useState("");
+    const [isloading,setIsloading] = useState(false)
 
     
 
@@ -48,6 +52,7 @@ export const Issue = () => {
     // const handleChangeDate = (e) =>{
     // }
     const handleClickissue = async() =>{
+        setIsloading(true)
         const res =await CreateIPFSuri(reward);
         console.log(res);
         const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
@@ -78,9 +83,12 @@ export const Issue = () => {
             console.log(issueNFT);
             // console.log(reward);
             console.log("Txn completed......")
-            
+            setIsloading(false)
+            setWalletAdd("")
+            // toast.success("Successfully Issued")
         } catch (error) {
             console.log(error)
+            // toast.warn("Something is went wrong")
             
         }
     }
@@ -190,11 +198,11 @@ export const Issue = () => {
                                                  }
                                             </Box>
                                            <Box sx={{marginTop:"25px",color:"black",display:"flex",justifyContent:"center"}} >
-                                                <Button variant="outlined" 
+                                                {!isloading ? <Button variant="outlined" 
                                                 onClick={handleClickissue}
                                                 >
                                                     Issue
-                                                </Button>      
+                                                </Button> : <TailSpin color='#A3A6FA' height={30}/>   } 
                                             </Box>
                                     </Box>
                                 </Box>

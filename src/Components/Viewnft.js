@@ -10,12 +10,14 @@ import TableRow from '@mui/material/TableRow';
 import ScanQR from './Scanqr';
 import {ethers} from 'ethers';
 import {contractAddress, abi} from '../common';
+import {TailSpin} from "react-loader-spinner";
 
 
 
 function createData(date,reward,status,expdate) {
     return { date,reward,status,expdate };
   }
+
 export const Viewnft = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -23,13 +25,17 @@ export const Viewnft = () => {
     const [token ,settoken] = useState("");
     const [walletAddress,setWalletAdd] = useState("");
     const [isCard,setIsCard] = useState(false)
+    const [rows,setrows] = useState([])
+    const [memberShip,setMembership] = useState("")
+    const [isloading,setIsloading]  = useState(false)
     const handleChangetoken = (e) =>{
         settoken(e.target.value)
     }
 
-    // const rows=[]
+    const lst=[]
     
     const getLog = async()=>{
+        setIsloading(true)
         // console.log("Click");
         //       const reward = (argsSel.message).slice(11)
         //       let redeem;
@@ -41,7 +47,17 @@ export const Viewnft = () => {
         //    const viewNFT = await contract.addressToUser(walletAddress);
         //    console.log(viewNFT);
         //    console.log("user Info fetched successfully....");
+        console.log("USER INFO IS FETCHING...........")
+        const userInfo = await contract.addressToUser(walletAddress);
+        console.log(userInfo)
+        const tokenInt = parseInt(userInfo[1]._hex,16);
+        console.log(`TokenId:${tokenInt}`);
+        settoken(tokenInt)
+        console.log(`IsPremium:${userInfo[3]}`);
 
+        userInfo[3] ? setMembership("PREMIUM") : setMembership("REGULAR")
+        console.log("FETCHED SUCCESSFULLY")
+        console.log("REWARD INFO FETCHING.......");
            const rewardArrLen = await contract.getLength(walletAddress);
            const numLen = parseInt(rewardArrLen._hex);
            console.log(numLen);
@@ -61,11 +77,20 @@ export const Viewnft = () => {
                 await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${expiryInt}`).then(res=>res.json()).then(data=>expiryDate = data);
         /*##################################################################################################3*/      
                 console.log(`Reward:${rewardInfo.reward}`);
-                console.log(`Issue Date:${issueDate}`);
-                console.log(`Expiry Date:${expiryDate}`);
+                console.log(`Status:${rewardInfo[3]}`)
+                console.log(`Issue Date:${issueDate.slice(0,10)}`);
+                console.log(`Expiry Date:${expiryDate.slice(0,10)}`);
+                let redeem;
+                rewardInfo[3].status ? redeem='Yes' : redeem ="NO"
+                lst.push(createData(issueDate.slice(0,10),rewardInfo.reward,redeem,expiryDate.slice(0,10)))
+                setrows(lst)
+                // console.log(rows)
 
             // //  console.log(rewardInfo[1]);
             }
+            setIsCard(true)
+            setIsloading(false)
+
            
         // const len = await contract.getLength(walletAddress);
         // console.log(parseInt(len))
@@ -77,7 +102,7 @@ export const Viewnft = () => {
     //     createData("08-02-2023","One Night Stay Free*","NO","12-05-2026"),
     //     createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
     // ];
-
+    
   return (
    <Box>
     <AppBar
@@ -95,9 +120,9 @@ export const Viewnft = () => {
             
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
                     <TextField label="Wallet Address" value={walletAddress} onChange={(e)=>setWalletAdd(e.target.value)} variant="standard" sx={{borderRadius: 10,width:"400"}} />
-                    <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                    {!isloading ? <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={getLog}
-                    >View NFT</Button>
+                    >View NFT</Button> : <TailSpin color='#A3A6FA' height={30}/>}
                 
                 </Box>
             </Toolbar>
@@ -116,9 +141,9 @@ export const Viewnft = () => {
                                         <Box sx={{marginTop:"40px",marginLeft:"10px"}}>
                                         <Typography variant='h5' sx={{fontWeight:"700",textAlign:"center"}}>ABC HOTEL</Typography>
                                         <Typography color={"green"} sx={{fontWeight:"600",marginTop:"20px"}}>MEMBERSHIP :</Typography>
-                                        <Typography >REGULAR</Typography>
+                                        <Typography >{memberShip}</Typography>
                                         <Typography color={"green"} sx={{fontWeight:"600",marginTop:"20px"}}>TOKEN ID :</Typography>
-                                        <Typography >005</Typography>
+                                        <Typography >{`000${token}`}</Typography>
                                         </Box>
                                     </Box>
                                     <Box sx={{marginLeft:"15px"}}>
@@ -154,7 +179,10 @@ export const Viewnft = () => {
                                                             </TableRow>
                                                             </TableHead>
                                                             <TableBody>
-                                                            {rows.map((row) => (
+                                                            {rows.map((row) => 
+                                                            {
+                                                            return(
+                                                                
                                                                 <TableRow
                                                                 key={row.date}
                                                                 >
@@ -165,7 +193,7 @@ export const Viewnft = () => {
                                                                 <TableCell >{row.status}</TableCell>
                                                                 <TableCell >{row.expdate}</TableCell>
                                                                 </TableRow>
-                                                            ))}
+                                                            )})}
                                                             </TableBody>
                                                         </Table>
                                                     </TableContainer>

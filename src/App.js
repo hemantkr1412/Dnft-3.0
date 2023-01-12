@@ -72,6 +72,8 @@ import { HashRouter } from "react-router-dom";
 import { Issue } from './Components/Issue';
 import {Viewnft} from "./Components/Viewnft";
 import { Updatenft } from './Components/Updatenft';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 // import TransferOwner from './Components/transferOwner';
 const App = () => {
   return (
@@ -80,6 +82,7 @@ const App = () => {
   <HashRouter>
     <header>
       <Navbar />
+      {/* <ToastContainer /> */}
     </header>
     <main>
     <Routes>

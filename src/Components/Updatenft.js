@@ -8,6 +8,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import ScanQR from './Scanqr';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 function createData(date,reward,status,expdate) {
     return { date,reward,status,expdate };
@@ -102,7 +104,7 @@ export const Updatenft = () => {
                                                             <MenuItem value={"REGULAR"}>REGULAR</MenuItem>
                                                         </Select>
                                                     </FormControl>
-                                        <Typography color={"green"} sx={{fontWeight:"600",marginTop:"20px"}}>TOKEN ID :</Typography>
+                                        <Typography color={"green"} sx={{fontWeight:"600",marginTop:"20px"}} >TOKEN ID :</Typography>
                                         <Typography >005</Typography>
                                         <Box sx={{display:"flex"}}>
                                                     <FormControl sx={{mt:2 ,minWidth: 120 }} size="small">
@@ -120,7 +122,23 @@ export const Updatenft = () => {
                                                         </Select>
                                                     </FormControl>
                                                 </Box>
-                                        {isReward && <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={reward} label="Reward" onChange={handleChangeReward} variant="standard"  placeholder='Reward' /> }
+                                        {isReward && 
+                                        <Box>
+                                        <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={reward} label="Reward" onChange={handleChangeReward} variant="standard"  placeholder='Reward' /> 
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            label="EXP. Date"
+                                            value={value}
+                                            onChange={(newValue) => {
+                                            setValue(newValue);
+                                            }}
+                                            sx={{marginTop:"25px",marginLeft:"10px"}}
+                                            formatDate={(date) => moment(new Date()).format('MM-DD-YYYY')}
+                                            renderInput={(params) => <TextField variant="standard" {...params} />}
+                                        />
+                                        </LocalizationProvider>
+                                        </Box>
+                                        }
                                         {/* <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={redeem} label="Redeem" variant="standard"  placeholder='Redeem' />  */}
                                         <Box>
                                         <Button sx={{marginTop:"35px"}} variant='outlined' >Save</Button>
