@@ -41,6 +41,17 @@ export const Viewnft = () => {
         //    const viewNFT = await contract.addressToUser(walletAddress);
         //    console.log(viewNFT);
         //    console.log("user Info fetched successfully....");
+        // ########## USER INFO #############
+        console.log("USER INFO IS FETCHING...........")
+        const userInfo = await contract.addressToUser(walletAddress);
+        console.log(userInfo)
+        const tokenInt = parseInt(userInfo[1]._hex,16);
+        console.log(`TokenId:${tokenInt}`);
+        console.log(`IsPremium:${userInfo[3]}`);
+        console.log("FETCHED SUCCESSFULLY")
+        console.log("REWARD INFO FETCHING.......");
+
+        //      ###### REWARD INFO ##########
 
            const rewardArrLen = await contract.getLength(walletAddress);
            const numLen = parseInt(rewardArrLen._hex);
@@ -49,8 +60,6 @@ export const Viewnft = () => {
            let expiryDate;
            for(let i = 0;i<numLen;i++){
                const rewardInfo = await contract.addressToReward(walletAddress,i);
-
-
         /*#####################################Date Logic######################################################3 */
                const issueInt = parseInt((rewardInfo.issueDate._hex),16)+19800;
                const expiryInt = parseInt((rewardInfo.expiryDate._hex),16)+19800;
@@ -63,13 +72,10 @@ export const Viewnft = () => {
                 console.log(`Reward:${rewardInfo.reward}`);
                 console.log(`Issue Date:${issueDate}`);
                 console.log(`Expiry Date:${expiryDate}`);
-
-            // //  console.log(rewardInfo[1]);
+                console.log(`Status:${rewardInfo[3]}`)
             }
+            console.log("FETCHED SUCCESSFULLY");
            
-        // const len = await contract.getLength(walletAddress);
-        // console.log(parseInt(len))
-        
         }
 
     // const rows = [
