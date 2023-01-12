@@ -8,10 +8,15 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import ScanQR from './Scanqr';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { contractAddress,abi } from '../common';
+import { ethers } from 'ethers';
 
 function createData(date,reward,status,expdate) {
     return { date,reward,status,expdate };
-  }
+}
 export const Updatenft = () => {
     const [token ,settoken] = useState("");
     const handleChangetoken = (e) =>{
@@ -21,17 +26,49 @@ export const Updatenft = () => {
     const [reward,setreward] = useState("");
     const [redeem,setredeem] = useState("");
     const [isReward,setisReward]=useState(false);
+    const [value, setValue] = React.useState(null);
     const rows = [
         createData("22-12-2022","Flat 50% OFF*","YES","15-01-2025"),
         createData("08-02-2023","One Night Stay Free*","NO","12-05-2026"),
         createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
-      ];
+        
+    ];
 
-      const [memberShip,setMembership]=useState("PREMIUM")
-      const handleChange = (e)=>{
+
+    // Contract integration starts from here.......................................
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+    const [memberShip,setMembership]=useState("PREMIUM")
+
+    let isPremium;
+    if(memberShip == "PREMIUM"){
+        isPremium = true;
+    }
+    else if(memberShip == "REGULAR"){
+        isPremium = false;
+    }
+    const handleChange = (e)=>{
         setMembership(e.target.value)
         
     }
+    //################################# Contract integration functions......############################
+    const update = async()=>{
+        let expiryDate;
+       await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${value.$y}-${value.$M+1}-${value.$D} 23:59:59`)
+        .then(res=>res.json())
+        .then(data=>{expiryDate=data-19800});
+        const change = await contract.updateNFT(0,walletAddress,isPremium,isReward,reward,expiryDate);
+        console.log(change);
+        console.log("updated successfully.......");
+    }
+
+    const redeemReward = async()=>{
+    const utiliseReward = await contract.redeem(walletAddress,arrId);
+    console.log(utiliseReward);
+    }
+/*#####################################################################################################3 */
+
 
     const handleChangeReward = (e) =>{
         setreward(e.target.value)
@@ -42,6 +79,10 @@ export const Updatenft = () => {
 
     const handleChangeRedeem = (e) =>{
         setredeem(e.target.value)
+    }
+
+    const handleChangeWalletAddr = (e) =>{
+        setWalletAdd(e.target.value)
     }
 
     const onClickAction = (reward) =>{
@@ -65,10 +106,10 @@ export const Updatenft = () => {
             
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
                     <TextField label="Token ID" value={token} onChange={handleChangetoken} variant="standard" sx={{borderRadius: 10,width:"400"}} />
+
+                    <TextField label="Wallet Address" value={walletAddress} onChange={handleChangeWalletAddr} variant="standard" sx={{borderRadius: 10,width:"400"}} />
+                
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
-                    onClick={(e) => {
-                        
-                    }}
                     >View NFT</Button>
                 
                 </Box>
@@ -103,7 +144,7 @@ export const Updatenft = () => {
                                                         </Select>
                                                     </FormControl>
                                         <Typography color={"green"} sx={{fontWeight:"600",marginTop:"20px"}}>TOKEN ID :</Typography>
-                                        <Typography >005</Typography>
+                                        <Typography >{token}</Typography>
                                         <Box sx={{display:"flex"}}>
                                                     <FormControl sx={{mt:2 ,minWidth: 120 }} size="small">
                                                         <InputLabel id="demo-select-small">REWARD</InputLabel>
@@ -120,10 +161,24 @@ export const Updatenft = () => {
                                                         </Select>
                                                     </FormControl>
                                                 </Box>
-                                        {isReward && <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={reward} label="Reward" onChange={handleChangeReward} variant="standard"  placeholder='Reward' /> }
+                                        {isReward && <Box>
+                                        <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={reward} label="Reward" onChange={handleChangeReward} variant="standard"  placeholder='Reward' /> 
+                                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            label="EXP. Date"
+                                            value={value}
+                                            onChange={(newValue) => {
+                                            setValue(newValue);
+                                            }}
+                                            sx={{marginTop:"25px",marginLeft:"10px"}}
+                                            formatDate={(date) => moment(new Date()).format('MM-DD-YYYY')}
+                                            renderInput={(params) => <TextField variant="standard" {...params} />}
+                                        />
+                                        </LocalizationProvider>
+                                        </Box> }
                                         {/* <TextField sx={{marginTop:"18px",marginBottom:"10px"}} value={redeem} label="Redeem" variant="standard"  placeholder='Redeem' />  */}
                                         <Box>
-                                        <Button sx={{marginTop:"35px"}} variant='outlined' >Save</Button>
+                                        <Button sx={{marginTop:"35px"}} onClick={update} variant='outlined' >Update</Button>
                                         </Box>
                                         </Box>
                                     </Box>
