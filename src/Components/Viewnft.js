@@ -47,13 +47,25 @@ export const Viewnft = () => {
         //    const viewNFT = await contract.addressToUser(walletAddress);
         //    console.log(viewNFT);
         //    console.log("user Info fetched successfully....");
+<<<<<<< HEAD
+=======
+        // ########## USER INFO #############
+>>>>>>> 3d549019d660421370e861890ab5c3548aaa1101
         console.log("USER INFO IS FETCHING...........")
         const userInfo = await contract.addressToUser(walletAddress);
         console.log(userInfo)
         const tokenInt = parseInt(userInfo[1]._hex,16);
         console.log(`TokenId:${tokenInt}`);
+<<<<<<< HEAD
         settoken(tokenInt)
         console.log(`IsPremium:${userInfo[3]}`);
+=======
+        console.log(`IsPremium:${userInfo[3]}`);
+        console.log("FETCHED SUCCESSFULLY")
+        console.log("REWARD INFO FETCHING.......");
+
+        //      ###### REWARD INFO ##########
+>>>>>>> 3d549019d660421370e861890ab5c3548aaa1101
 
         userInfo[3] ? setMembership("PREMIUM") : setMembership("REGULAR")
         console.log("FETCHED SUCCESSFULLY")
@@ -65,8 +77,6 @@ export const Viewnft = () => {
            let expiryDate;
            for(let i = 0;i<numLen;i++){
                const rewardInfo = await contract.addressToReward(walletAddress,i);
-
-
         /*#####################################Date Logic######################################################3 */
                const issueInt = parseInt((rewardInfo.issueDate._hex),16)+19800;
                const expiryInt = parseInt((rewardInfo.expiryDate._hex),16)+19800;
@@ -77,6 +87,7 @@ export const Viewnft = () => {
                 await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${expiryInt}`).then(res=>res.json()).then(data=>expiryDate = data);
         /*##################################################################################################3*/      
                 console.log(`Reward:${rewardInfo.reward}`);
+<<<<<<< HEAD
                 console.log(`Status:${rewardInfo[3]}`)
                 console.log(`Issue Date:${issueDate.slice(0,10)}`);
                 console.log(`Expiry Date:${expiryDate.slice(0,10)}`);
@@ -91,10 +102,14 @@ export const Viewnft = () => {
             setIsCard(true)
             setIsloading(false)
 
+=======
+                console.log(`Issue Date:${issueDate}`);
+                console.log(`Expiry Date:${expiryDate}`);
+                console.log(`Status:${rewardInfo[3]}`)
+            }
+            console.log("FETCHED SUCCESSFULLY");
+>>>>>>> 3d549019d660421370e861890ab5c3548aaa1101
            
-        // const len = await contract.getLength(walletAddress);
-        // console.log(parseInt(len))
-        
         }
 
     // const rows = [
