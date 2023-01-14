@@ -23,6 +23,8 @@ export const Issue = () => {
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
+    const [value, setValue] = React.useState(null);
+
     
     //ddmmyyyy
     const [reward,setreward] = useState("");
@@ -84,6 +86,7 @@ export const Issue = () => {
             // console.log(reward);
             console.log("Txn completed......")
             setIsloading(false)
+            alert("Successfully Issued")
             setWalletAdd("")
             // toast.success("Successfully Issued")
         } catch (error) {
@@ -118,7 +121,7 @@ export const Issue = () => {
         onChange={(e) => setNewOwner(e.target.value)}
       ></input> */}
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
-                    <TextField label="Wallet Address" value={walletAddress.split("ethereum:")} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
+                    <TextField label="Wallet Address" value={walletAddress} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={(e) => {
                         setWalletAdd((e.target.value).split("ethereum:"))
@@ -142,7 +145,7 @@ export const Issue = () => {
                                         <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/Qmb52oqVqNh7gn6ZRfaB88FdykuzMZgDttek8yeJXooX5U" width={400} height={400}/>
                                     </Box>
                                     <Box sx={{marginLeft:"15px"}}>
-                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress.split("ethereum:")}</Typography>
+                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress}</Typography>
                                             <Box sx={{marginTop:"20px"}}>
                                                 <Typography color={"green"} sx={{fontWeight:"600"}}>MEMBERSHIP : </Typography>
 

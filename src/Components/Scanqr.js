@@ -17,7 +17,7 @@ const ScanQR = (props) => {
     if (scanData && scanData !== "") {
       console.log(`loaded >>>`, scanData);
       setData(scanData);
-      props.setWalletAdd(scanData);
+      props.setWalletAdd(scanData.slice(9));
       setStartScan(false);
       setLoadingScan(false);
       // setPrecScan(scanData);
