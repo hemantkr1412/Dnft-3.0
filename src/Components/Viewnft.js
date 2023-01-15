@@ -11,6 +11,8 @@ import ScanQR from './Scanqr';
 import {ethers} from 'ethers';
 import {contractAddress, abi} from '../common';
 import {TailSpin} from "react-loader-spinner";
+import UserContext from "../context/UserContext"
+import { useContext } from 'react';
 
 
 
@@ -33,6 +35,7 @@ export const Viewnft = () => {
     }
 
     const lst=[]
+
   
     
     const getLog = async()=>{
