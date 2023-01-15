@@ -1,6 +1,8 @@
 import { React, useState } from "react";
 import { ethers } from "ethers";
 import { contractAddress, abi } from "../common";
+import { Button } from "@mui/material";
+import { Box } from "@mui/system";
 
 function TransferOwner() {
   const [newOwner, setNewOwner] = useState("");
@@ -12,22 +14,27 @@ function TransferOwner() {
     try {
       const transfer = await contract.transferOwnership(newOwner);
       console.log(transfer);
+      alert("Done")
     } catch (error) {
       console.log(`Error occured ${error}`);
     }
   };
 
   return (
-    <>
-      <button type="button" class="btn btn-primary" onClick={changeOwner}>
+    <Box sx={{
+      backgraoundColor:"red",
+      width:"500px",
+      height:"200px"
+    }}>
+      <Button color="warning" variant="contained"  onClick={changeOwner}>
         Transfer Ownership
-      </button>
+      </Button>
       <input
         type="text"
         placeholder="New Owner Address"
         onChange={(e) => setNewOwner(e.target.value)}
       ></input>
-    </>
+    </Box>
   );
 }
 export default TransferOwner;

@@ -23,6 +23,9 @@ export const Issue = () => {
     const [scanner,setScanner] = useState(false);
     const [walletAddress,setWalletAdd] = useState("");
     const [isReward,setisReward]=useState(false);
+    const [value, setValue] = React.useState(null);
+    const [getSigner,setSigner] = useState("");
+
     
     //ddmmyyyy
     const [reward,setreward] = useState("");
@@ -51,6 +54,12 @@ export const Issue = () => {
     }
     // const handleChangeDate = (e) =>{
     // }
+    const currentAddr = async()=>{
+       const addr =  await provider.send("eth_requestAccounts",[1])
+       setSigner(addr);
+        // setSigner(s);
+            console.log(getSigner);
+        }
     const handleClickissue = async() =>{
         setIsloading(true)
         const res =await CreateIPFSuri(reward);
@@ -58,10 +67,15 @@ export const Issue = () => {
         const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
         console.log(jsonURI);
         let isRewarded; 
+        let expiryDate;
         if (isReward){
             isRewarded = true;
+            await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${value.$y}-${value.$M+1}-${value.$D} 23:59:59`)
+            .then(res=>res.json())
+            .then(data=>{expiryDate=data-19800});
         }else{
             isRewarded = false;
+            expiryDate = 0;
         }
         let premium;
         if(memberShip == "REGULAR"){
@@ -70,10 +84,6 @@ export const Issue = () => {
         else {premium=true}
 
        //Date
-       let expiryDate;
-       await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${value.$y}-${value.$M+1}-${value.$D} 23:59:59`)
-       .then(res=>res.json())
-       .then(data=>{expiryDate=data-19800});
        // unixToDate.then(data=>console.log(data));//VIEW NFT
        
 
@@ -82,16 +92,34 @@ export const Issue = () => {
             const issueNFT = await contract.safeMint(walletAddress,jsonURI,isRewarded,premium,reward,expiryDate);
             console.log(issueNFT);
             // console.log(reward);
-            console.log("Txn completed......")
+            console.log("Txn completed...")
             setIsloading(false)
+            alert("Successfully Issued")
             setWalletAdd("")
             // toast.success("Successfully Issued")
         } catch (error) {
-            console.log(error)
-            // toast.warn("Something is went wrong")
+           const revertData = error.data.data;
+          const decodeErr = contract.interface.parseError(revertData);
+          console.log(decodeErr);
+          console.log(`Decode Error name:${decodeErr.name}`);
             
         }
+
     }
+    const hotelReg = async()=>{
+        console.log("Registration starts");
+        try {
+            const reg = await contract.orgRegister();
+            console.log(reg.hash);
+        } catch (error) {
+          const revertData = error.data.data;
+          const decodeErr = contract.interface.parseError(revertData);
+          console.log(`Decode:${decodeErr}`);
+          console.log(`DecodeName: ${decodeErr.name}`);
+        }
+
+     
+       }
 
 
 
@@ -111,14 +139,14 @@ export const Issue = () => {
             <Toolbar>
             {/* <button type="button" onClick={transferOwner}>
         Transfer Ownership
-      </button> */}
+    </button> */}
       {/* <input
         type="text"
         placeholder="New Owner Address"
         onChange={(e) => setNewOwner(e.target.value)}
-      ></input> */}
+    ></input> */}
                 <Box margin={'auto'} marginBottom ='auto' style={{display:"flex"}} >
-                    <TextField label="Wallet Address" value={walletAddress.split("ethereum:")} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
+                    <TextField label="Wallet Address" value={walletAddress} onChange={handleChangeWallet} variant="standard" sx={{borderRadius: 10,width:"400"}} />
                     <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={(e) => {
                         setWalletAdd((e.target.value).split("ethereum:"))
@@ -126,6 +154,12 @@ export const Issue = () => {
                     >Enter Manually</Button>
                     
                 </Box>
+                    <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                                onClick={hotelReg}
+                                >Register Hotel</Button>
+                    <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                                onClick={currentAddr}
+                                >Get Wallet Address</Button>
             </Toolbar>
             
         </AppBar>
@@ -142,7 +176,7 @@ export const Issue = () => {
                                         <img style={{margin:"auto"}} src="https://gateway.pinata.cloud/ipfs/Qmb52oqVqNh7gn6ZRfaB88FdykuzMZgDttek8yeJXooX5U" width={400} height={400}/>
                                     </Box>
                                     <Box sx={{marginLeft:"15px"}}>
-                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress.split("ethereum:")}</Typography>
+                                        <Typography sx={{fontSize:"16px",fontWeight:"600"}} >Wallet: {walletAddress}</Typography>
                                             <Box sx={{marginTop:"20px"}}>
                                                 <Typography color={"green"} sx={{fontWeight:"600"}}>MEMBERSHIP : </Typography>
 
@@ -216,3 +250,8 @@ export const Issue = () => {
     </Box>
   )
 }
+
+/*Two view sections: 1)For Hotel- They can see only one card of the input wallet Address.
+                     2)For User - They can see all the cards from the all the orgs they've visited and that org is client of BIT too...
+Hotel Registration section.....
+                     */

@@ -72,6 +72,8 @@ import { HashRouter } from "react-router-dom";
 import { Issue } from './Components/Issue';
 import {Viewnft} from "./Components/Viewnft";
 import { Updatenft } from './Components/Updatenft';
+import TransferOwner from './Components/transferOwner';
+import HotelReg from './Components/hotelReg';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 // import TransferOwner from './Components/transferOwner';
@@ -87,12 +89,17 @@ const App = () => {
     <main>
     <Routes>
         {/* <Route path="/" element={<NFTCard />}/> */}
+        {/* <Route path="/hotel" element={<HotelReg />}/> */}
         <Route path="/issue" element={<Issue />}/>
         <Route path="/viewnft" element={<Viewnft />}/>
         <Route path="/updatenft" element={<Updatenft />}/>
+        <Route path="/transfer" element={<TransferOwner />} />
         {/* <Route path="/src/Components/transferOwner.js" element={<TransferOwner />}/> */}
       </Routes>
     </main>
+    <footer>
+      {/* <TransferOwner /> */}
+    </footer>
     </HashRouter>
   </UserState>
 
