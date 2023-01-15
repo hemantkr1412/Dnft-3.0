@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import ScanQR from './Scanqr';
 import {TailSpin} from "react-loader-spinner";
 import {ethers} from 'ethers';
-import {contractAddress, abi} from '../common';
+import {contractAddress, abi} from '../common_2';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

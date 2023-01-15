@@ -1,7 +1,7 @@
 const {ethers} = require("hardhat");
 
 async function main() {
-  const contract = await ethers.getContractFactory("DNFT");
+  const contract = await ethers.getContractFactory("DNFT_2");
   console.log("Contract is deploying....");
   const contractDep = await contract.deploy();
   await contractDep.deployed();

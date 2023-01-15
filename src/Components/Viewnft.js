@@ -1,5 +1,7 @@
 import { AppBar, Button, Card, TextField, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
+import UserContext from "../context/UserContext"
+import { useContext } from 'react';
 import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -26,6 +28,7 @@ export const Viewnft = () => {
     const contract = new ethers.Contract(contractAddress, abi, signer);
     const [token ,settoken] = useState("");
     const [walletAddress,setWalletAdd] = useState("");
+    const [getSigner,setSigner] = useState("");
     const [isCard,setIsCard] = useState(false)
     const [rows,setrows] = useState([])
     const [memberShip,setMembership] = useState("")
@@ -33,14 +36,14 @@ export const Viewnft = () => {
     const handleChangetoken = (e) =>{
         settoken(e.target.value)
     }
-
+    
     const lst=[]
-
   
     
     const getLog = async()=>{
         let redeem;
         setIsloading(true)
+        
         // console.log("Click");
         //       const reward = (argsSel.message).slice(11)
         //       let redeem;
@@ -52,8 +55,11 @@ export const Viewnft = () => {
         //    const viewNFT = await contract.addressToUser(walletAddress);
         //    console.log(viewNFT);
         //    console.log("user Info fetched successfully....");
+        let addr = await provider.send("eth_requestAccounts",[]);
+            const permAddr = addr[0];
+            setSigner(permAddr);
         console.log("USER INFO IS FETCHING...........")
-        const userInfo = await contract.addressToUser(walletAddress);
+        const userInfo = await contract.orgToUserInfo(permAddr,walletAddress);
         console.log(userInfo)
         const tokenInt = parseInt(userInfo[1]._hex,16);
         console.log(`TokenId:${tokenInt}`);
@@ -63,13 +69,14 @@ export const Viewnft = () => {
         userInfo[3] ? setMembership("PREMIUM") : setMembership("REGULAR")
         console.log("FETCHED SUCCESSFULLY")
         console.log("REWARD INFO FETCHING.......");
-           const rewardArrLen = await contract.getLength(walletAddress);
+           const rewardArrLen = await contract.getRewardlen(permAddr,walletAddress);
            const numLen = parseInt(rewardArrLen._hex);
            console.log(numLen);
            let issueDate;
            let expiryDate;
            for(let i = 0;i<numLen;i++){
-               const rewardInfo = await contract.addressToReward(walletAddress,i);
+               const rewardInfo = await contract.orgToUserReward(permAddr,walletAddress,i);
+               console.log(rewardInfo)
         /*#####################################Date Logic######################################################3 */
                const issueInt = parseInt((rewardInfo.issueDate._hex),16)+19800;
                const expiryInt = parseInt((rewardInfo.expiryDate._hex),16)+19800;
@@ -83,6 +90,7 @@ export const Viewnft = () => {
                 console.log(`Status:${rewardInfo[3]}`)
                 console.log(`Issue Date:${issueDate.slice(0,10)}`);
                 console.log(`Expiry Date:${expiryDate.slice(0,10)}`);
+                console.log(`Provider Address:${rewardInfo[5]}`);
                 rewardInfo[3] ? redeem='Yes' : redeem ="NO"
                 // console.log(redeem,rewardInfo.reward)
                 lst.push(createData(issueDate.slice(0,10),rewardInfo.reward,redeem,expiryDate.slice(0,10)))
@@ -96,12 +104,22 @@ export const Viewnft = () => {
 
            
         }
+        
+        const viewNFT  = async()=>{
+            let addr = await provider.send("eth_requestAccounts",[]);
+            const permAddr = addr[0];
+            const view = await contract.orgToUserInfo(permAddr,walletAddress);
+            console.log(permAddr);
+            console.log(view);
+          console.log("nft viewed........")
+        }
 
     // const rows = [
     //     createData("22-12-2022","Flat 50% OFF*","YES","15-01-2025"),
     //     createData("08-02-2023","One Night Stay Free*","NO","12-05-2026"),
     //     createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
     // ];
+
     
   return (
    <Box>
@@ -123,7 +141,9 @@ export const Viewnft = () => {
                     {!isloading ? <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={getLog}
                     >View NFT</Button> : <TailSpin color='#A3A6FA' height={30}/>}
-                
+                <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                    onClick={viewNFT}
+                    >View NFT_2</Button>
                 </Box>
             </Toolbar>
             
