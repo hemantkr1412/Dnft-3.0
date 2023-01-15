@@ -55,15 +55,15 @@ export const Issue = () => {
     // const handleChangeDate = (e) =>{
     // }
     const currentAddr = async()=>{
-       const addr =  await provider.send("eth_requestAccounts",[1])
-       setSigner(addr);
+       const addr =  await provider.send("eth_requestAccounts",[])
+       setSigner(addr[0]);
         // setSigner(s);
             console.log(getSigner);
         }
     const handleClickissue = async() =>{
         setIsloading(true)
         const res =await CreateIPFSuri(reward);
-        console.log(res);
+        cosole.log(res);
         const jsonURI = "https://bit.infura-ipfs.io/ipfs/" + (res);
         console.log(jsonURI);
         let isRewarded; 
@@ -116,8 +116,7 @@ export const Issue = () => {
           const decodeErr = contract.interface.parseError(revertData);
           console.log(`Decode:${decodeErr}`);
           console.log(`DecodeName: ${decodeErr.name}`);
-        }
-
+        } 
      
        }
 
