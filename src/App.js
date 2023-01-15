@@ -74,10 +74,14 @@ import {Viewnft} from "./Components/Viewnft";
 import { Updatenft } from './Components/Updatenft';
 import TransferOwner from './Components/transferOwner';
 import HotelReg from './Components/hotelReg';
+import { LandingPage } from './Components/LandingPage';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 // import TransferOwner from './Components/transferOwner';
 const App = () => {
+
+  
+
   return (
   <>
   <UserState>
@@ -88,7 +92,7 @@ const App = () => {
     </header>
     <main>
     <Routes>
-        {/* <Route path="/" element={<NFTCard />}/> */}
+        <Route path="/" element={<LandingPage />}/>
         {/* <Route path="/hotel" element={<HotelReg />}/> */}
         <Route path="/issue" element={<Issue />}/>
         <Route path="/viewnft" element={<Viewnft />}/>

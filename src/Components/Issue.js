@@ -14,8 +14,12 @@ import TransferOwner from './transferOwner';
 import {ethers} from 'ethers';
 import {contractAddress,abi} from '../common.js';
 import {TailSpin} from "react-loader-spinner";
+import { useNavigate } from 'react-router';
 // import { ToastContainer, toast } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
+import UserContext from '../context/UserContext';
+import { useContext } from 'react';
+import { LandingPage } from './LandingPage';
 
 export const Issue = () => {
     const [memberShip,setMembership]=useState("REGULAR");
@@ -37,6 +41,10 @@ export const Issue = () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const contract = new ethers.Contract(contractAddress, abi, signer);
+
+    const navigate = useNavigate()
+    const user = useContext(UserContext)
+
     const handleChange =(e) =>{
         setisReward((e.target.value))
     }
@@ -121,6 +129,13 @@ export const Issue = () => {
      
        }
 
+    if (!user.isConnected || !user.iswalletAvailable){
+        return (
+            <LandingPage />
+        )
+    }
+    
+
 
 
   return (
@@ -129,7 +144,7 @@ export const Issue = () => {
         position="sticky"
         sx={{
             margin: 'auto',
-            marginTop: 12,
+            marginTop: 2,
             marginBottom: 2,
             width: '30%',
             borderRadius: 10,
@@ -154,12 +169,12 @@ export const Issue = () => {
                     >Enter Manually</Button>
                     
                 </Box>
-                    <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                    {/* <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                                 onClick={hotelReg}
-                                >Register Hotel</Button>
-                    <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
+                                >Register Hotel</Button> */}
+                    {/* <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                                 onClick={currentAddr}
-                                >Get Wallet Address</Button>
+                                >Get Wallet Address</Button> */}
             </Toolbar>
             
         </AppBar>

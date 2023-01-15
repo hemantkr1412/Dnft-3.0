@@ -50,13 +50,14 @@ function Navbar() {
   };
   const user = useContext(UserContext)
 
-  const pages=["Issue NFT","View NFT","Update NFT"]
+  let pages;
+  user.isConnected ? user.admin ? pages=["Issue NFT","View NFT","Update NFT"] : pages=["View NFT"] : pages =[]
 
  
 
   return (
     <>
-    <AppBar position="absolute"
+    <AppBar position="static"
     sx={{background:"#A3A6FA"}}
     >
       <Container maxWidth="xl">

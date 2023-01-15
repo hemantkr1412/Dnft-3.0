@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import UserContext from "./UserContext";
 
 import { ethers } from "ethers";
+import {contractAddress,abi} from "../common";
 
 const UserState = (props) => {
   const provider =
@@ -16,7 +17,7 @@ const UserState = (props) => {
   const [status,setStatus]= useState(true);
   const [admin,setAdmin] = useState(false);
   const [globaldNFT,setGlobaldNFT] = useState("")
-
+  const contract = new ethers.Contract(contractAddress, abi, signer)
  
 
   useEffect(() => {
@@ -26,9 +27,19 @@ const UserState = (props) => {
         .then((res) => {
           setUserAccount(res);
           setIsConnected(true);
-          if(userAccount==="0xcebFD12bA1e85a797BFdf62081785E9103A96Dd3"){
-            setAdmin(true)
-          }
+
+
+          const isOrg = async()=>{
+            const check = await contract.addressToOrgInfo(userAccount);
+            if (check[0]){
+              setAdmin(true)
+            
+            }
+           }
+          
+          isOrg()
+
+
         })
         .catch((err) => {
           setIsConnected(false);

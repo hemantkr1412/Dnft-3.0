@@ -1,6 +1,6 @@
 import { AppBar, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,6 +15,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Loading from "../Loading.gif";
+import { LandingPage } from './LandingPage';
+import UserContext from '../context/UserContext';
 
 function createData(date,reward,status,expdate) {
     return { date,reward,status,expdate };
@@ -39,6 +41,7 @@ export const Updatenft = () => {
 
     const lst=[]
     
+    const user = useContext(UserContext)
     const getLog = async()=>{
         setIsloading(true)
         // console.log("Click");
@@ -189,6 +192,11 @@ export const Updatenft = () => {
         setarrId(index)
         redeemReward(index)
     }
+    if (!user.isConnected || !user.iswalletAvailable){
+        return (
+            <LandingPage />
+        )
+    }
 
   return (
    <Box>
@@ -196,7 +204,7 @@ export const Updatenft = () => {
         position="sticky"
         sx={{
             margin: 'auto',
-            marginTop: 12,
+            marginTop: 2,
             marginBottom: 2,
             width: '30%',
             borderRadius: 10,

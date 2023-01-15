@@ -13,8 +13,9 @@ import ScanQR from './Scanqr';
 import {ethers} from 'ethers';
 import {contractAddress, abi} from '../common';
 import {TailSpin} from "react-loader-spinner";
-import UserContext from "../context/UserContext"
-import { useContext } from 'react';
+
+import { LandingPage } from './LandingPage';
+
 
 
 
@@ -33,6 +34,8 @@ export const Viewnft = () => {
     const [rows,setrows] = useState([])
     const [memberShip,setMembership] = useState("")
     const [isloading,setIsloading]  = useState(false)
+
+    const user =  useContext(UserContext)
     const handleChangetoken = (e) =>{
         settoken(e.target.value)
     }
@@ -120,6 +123,12 @@ export const Viewnft = () => {
     //     createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
     // ];
 
+    if (!user.isConnected || !user.iswalletAvailable){
+        return (
+            <LandingPage />
+        )
+    }
+
     
   return (
    <Box>
@@ -127,7 +136,7 @@ export const Viewnft = () => {
         position="sticky"
         sx={{
             margin: 'auto',
-            marginTop: 12,
+            marginTop: 2,
             marginBottom: 2,
             width: '30%',
             borderRadius: 10,
@@ -141,9 +150,11 @@ export const Viewnft = () => {
                     {!isloading ? <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={getLog}
                     >View NFT</Button> : <TailSpin color='#A3A6FA' height={30}/>}
+
                 <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={viewNFT}
                     >View NFT_2</Button>
+                    
                 </Box>
             </Toolbar>
             
