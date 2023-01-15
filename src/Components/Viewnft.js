@@ -107,27 +107,41 @@ export const Viewnft = () => {
 
            
         }
-        
-        const viewNFT  = async()=>{
+
+        //for user multiple nfts....
+        const viewAsUser = async()=>{
             let addr = await provider.send("eth_requestAccounts",[]);
             const permAddr = addr[0];
-            const view = await contract.orgToUserInfo(permAddr,walletAddress);
             console.log(permAddr);
-            console.log(view);
-          console.log("nft viewed........")
+            console.log("Rewards start fetching..")
+            try {
+                const rewOrgLen = await contract.getOrgLen(permAddr);
+                const intLen = parseInt(rewOrgLen._hex,16);
+                console.log(intLen);
+
+                for(let i=0;i<intLen;i++){
+                    const orgAddrs = await contract.userToOrgs(permAddr,i)
+                    console.log(orgAddrs);
+                    const rewLen = await contract.getRewardlen(orgAddrs,permAddr);
+                    const intRewLen = parseInt(rewLen._hex,16);
+                    console.log(intRewLen);
+                    for(let j=0;j<intRewLen;j++){
+                        const userRews = await contract.orgToUserReward(orgAddrs,permAddr,j);
+                        console.log(userRews);
+                    }  
+                }
+                console.log("All user Nfts.....")
+            } catch (error) {
+                console.log(error)
+            }
         }
 
+    
     // const rows = [
     //     createData("22-12-2022","Flat 50% OFF*","YES","15-01-2025"),
     //     createData("08-02-2023","One Night Stay Free*","NO","12-05-2026"),
     //     createData("05-06-2024","Upto 30% OFF*","NO","21-03-2026"),
     // ];
-
-    if (!user.isConnected || !user.iswalletAvailable){
-        return (
-            <LandingPage />
-        )
-    }
 
     
   return (
@@ -154,7 +168,6 @@ export const Viewnft = () => {
                 <Button type='submit' variant="contained" sx={{borderRadius: 10,marginLeft:"30px"}}
                     onClick={viewNFT}
                     >View NFT_2</Button>
-                    
                 </Box>
             </Toolbar>
             

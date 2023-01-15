@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import ScanQR from './Scanqr';
 import {TailSpin} from "react-loader-spinner";
 import {ethers} from 'ethers';
-import {contractAddress, abi} from '../common_2';
+import {contractAddress, abi} from '../common';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -37,12 +37,18 @@ export const Updatenft = () => {
     const [isloading,setIsloading] = useState(false);
     const [memberShip,setMembership] = useState("")
     const [isCardloading,setIsCardloading] = useState(false)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, abi, signer);
+
 
 
     const lst=[]
     
     const user = useContext(UserContext)
     const getLog = async()=>{
+        let addr = await provider.send("eth_requestAccounts",[]);
+            const permAddr = addr[0];
         setIsloading(true)
         // console.log("Click");
         //       const reward = (argsSel.message).slice(11)
@@ -56,7 +62,7 @@ export const Updatenft = () => {
         //    console.log(viewNFT);
         //    console.log("user Info fetched successfully....");
         console.log("USER INFO IS FETCHING...........")
-        const userInfo = await contract.addressToUser(walletAddress);
+        const userInfo = await contract.orgToUserInfo(permAddr,walletAddress);
         console.log(userInfo)
         const tokenInt = parseInt(userInfo[1]._hex,16);
         console.log(`TokenId:${tokenInt}`);
@@ -66,14 +72,15 @@ export const Updatenft = () => {
         userInfo[3] ? setMembership("PREMIUM") : setMembership("REGULAR")
         console.log("FETCHED SUCCESSFULLY")
         console.log("REWARD INFO FETCHING.......");
-           const rewardArrLen = await contract.getLength(walletAddress);
+           const rewardArrLen = await contract.getRewardlen(permAddr,walletAddress);
            const numLen = parseInt(rewardArrLen._hex);
            console.log(numLen);
            let issueDate;
            let expiryDate;
            for(let i = 0;i<numLen;i++){
-               const rewardInfo = await contract.addressToReward(walletAddress,i);
-        /*#####################################Date Logic######################################################3 */
+               const rewardInfo = await contract.orgToUserReward(permAddr,walletAddress,i);
+               console.log(rewardInfo);
+        /*##################################### Date Logic ######################################################   */
                const issueInt = parseInt((rewardInfo.issueDate._hex),16)+19800;
                const expiryInt = parseInt((rewardInfo.expiryDate._hex),16)+19800;
                //ISSUE DATE
@@ -83,11 +90,11 @@ export const Updatenft = () => {
                 await fetch(`https://helloacm.com/api/unix-timestamp-converter/?cached&s=${expiryInt}`).then(res=>res.json()).then(data=>expiryDate = data);
         /*##################################################################################################3*/      
                 console.log(`Reward:${rewardInfo.reward}`);
-                console.log(`Status:${rewardInfo[3]}`)
+                console.log(`Status:${rewardInfo[4]}`)
                 console.log(`Issue Date:${issueDate.slice(0,10)}`);
                 console.log(`Expiry Date:${expiryDate.slice(0,10)}`);
                 let redeem;
-                rewardInfo[3]? redeem='Yes' : redeem ="NO"
+                rewardInfo[4]? redeem='Yes' : redeem ="NO"
                 lst.push(createData(issueDate.slice(0,10),rewardInfo.reward,redeem,expiryDate.slice(0,10)))
                 setrows(lst)
                 // console.log(rows)
@@ -112,10 +119,7 @@ export const Updatenft = () => {
  
 
     // Contract integration starts from here.......................................
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, abi, signer);
-
+    
 
     let isPremium;
     if(memberShip == "PREMIUM"){
