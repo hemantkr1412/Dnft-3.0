@@ -7,9 +7,11 @@ import walletLogo from "./wallet.png"
 import {ethers} from 'ethers';
 import {contractAddress,abi} from '../common.js';
 import HotelRegister from './hotelReg';
+import { useNavigate } from 'react-router-dom';
 
 export const LandingPage = () => {
     const user = useContext(UserContext)
+    const navigate = useNavigate()
   return (
     <Box>
         {user.iswalletAvailable ?
@@ -22,7 +24,24 @@ export const LandingPage = () => {
                 display:"flex",
                 justifyContent:"center",
                }}>
-                {!user.admin && <HotelRegister />}
+                {!user.admin &&
+                <Box sx={{display:"flex",flexDirection:"column"}}>
+                    <Button 
+                    
+                    variant='contained'
+                    onClick={(e) => navigate('/hotel') }
+                    >
+                        Register Orgnisation
+                    </Button>
+                    <Button 
+                    sx={{marginTop:"20px"}}
+                       variant='contained'
+                        onClick={(e) => navigate('/viewnft')}
+                    >
+                        User
+                    </Button>
+                </Box>
+                }
                </Box>
             </> :
             <>

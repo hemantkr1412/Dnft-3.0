@@ -93,7 +93,7 @@ const App = () => {
     <main>
     <Routes>
         <Route path="/" element={<LandingPage />}/>
-        {/* <Route path="/hotel" element={<HotelReg />}/> */}
+        <Route path="/hotel" element={<HotelReg />}/>
         <Route path="/issue" element={<Issue />}/>
         <Route path="/viewnft" element={<Viewnft />}/>
         <Route path="/updatenft" element={<Updatenft />}/>
