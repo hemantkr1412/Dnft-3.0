@@ -109,7 +109,8 @@ export const Issue = () => {
     const hotelReg = async()=>{
         console.log("Registration starts");
         try {
-            const reg = await contract.orgRegister();
+            const reg = await contract.orgRegister(orgSymbol);//to make useState for orgSymbol and setOrgSymbol by taking input in frontend.
+            
             console.log(reg.hash);
         } catch (error) {
           const revertData = error.data.data;

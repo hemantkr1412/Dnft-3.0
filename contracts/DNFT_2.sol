@@ -40,6 +40,9 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
     mapping(address=>address[]) public userToOrgs; //For user page
     mapping(address=>uint) public totalRewards;
     
+    //events
+    event TxnInfo(address indexed _sender,address indexed _receiver, bool indexed _isRewarded, bool _isRedeemed);
+   
     //custom errors
     error InvalidOwner(address _address);
     error InvalidUser(address _address);
@@ -51,11 +54,16 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
     
 
     //functions
-    function orgRegister() public {
+    function orgRegister(string memory _symbol) public {
     if(addressToOrgInfo[msg.sender].isRegistered){
         revert AlreadyExist(msg.sender);
     }
-    addressToOrgInfo[msg.sender].isRegistered = true;
+    OrgInfo memory newOrg = OrgInfo({
+     isRegistered:true,
+     noOfUsers:0,
+     tokenSymbol:_symbol
+    });
+    addressToOrgInfo[msg.sender] = newOrg;
     }
 
     function safeMint(address to, string memory newUri,bool _isRewarded,bool _isPremium,string memory _reward, uint256 _expiryDate) public {
@@ -94,7 +102,7 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
             RewardInfo memory _noReward = RewardInfo({
                 reward:"N/A",
                 isRewardGiven:false,
-                issueDate:0,
+                issueDate:block.timestamp,
                 expiryDate:0,
                 isRedeemed:false,
                 providerAddr:msg.sender
@@ -112,6 +120,7 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
         userToOrgs[to].push(msg.sender);
         orgToUserInfo[msg.sender][to] = newUser;
         addressToOrgInfo[msg.sender].noOfUsers++;
+        emit TxnInfo(msg.sender, to, _isRewarded, false);
     }
     
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
@@ -163,7 +172,7 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
             RewardInfo memory _noReward = RewardInfo({
                 reward:"N/A",
                 isRewardGiven:false,
-                issueDate:0,
+                issueDate:block.timestamp,
                 expiryDate:0,
                 isRedeemed:false,
                  providerAddr:msg.sender
@@ -171,6 +180,7 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
 
             orgToUserReward[msg.sender][_userAddress].push(_noReward);
         }
+        emit TxnInfo(msg.sender, _userAddress , _isRewarded,false);
 } 
 
     function redeem(address _userAddress,uint _arrId) public onlyOwner{
@@ -191,6 +201,12 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
         existingReward.isRedeemed = true;
         userInfo.noOfRewards--;
         totalRewards[_userAddress]--;
+        
+        emit TxnInfo(msg.sender, _userAddress,false,true);
 
   }  
 } 
+
+//hotel symbol input
+//view access to hotel
+//expiry date for no reward N/A0

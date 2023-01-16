@@ -117,6 +117,11 @@ export const Viewnft = () => {
                 for(let i=0;i<intLen;i++){
                     const orgAddrs = await contract.userToOrgs(permAddr,i)
                     console.log(orgAddrs);
+                    console.log("userInfo started fetching...");
+                    const userInfo = await contract.orgToUserInfo(orgAddrs,permAddr);
+                    console.log(userInfo);
+                    console.log("user fetched...")
+                    console.log("reward fetching started.");
                     const rewLen = await contract.getRewardlen(orgAddrs,permAddr);
                     const intRewLen = parseInt(rewLen._hex,16);
                     console.log(intRewLen);

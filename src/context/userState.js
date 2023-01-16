@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
 import UserContext from "./UserContext";
-
 import { ethers } from "ethers";
-
+import {contractAddress,abi} from "../common";
 const UserState = (props) => {
   const provider =
     window.ethereum != null
       ? new ethers.providers.Web3Provider(window.ethereum)
       : null;
   const signer = provider != null ? provider.getSigner() : null;
-
+  const contract = new ethers.Contract(contractAddress, abi, signer);
   const [isConnected, setIsConnected] = useState(false);
   const [userAccount, setUserAccount] = useState("");
   const [isToken, setIsToken] = useState(false);
   const [status,setStatus]= useState(true);
   const [admin,setAdmin] = useState(false);
   const [globaldNFT,setGlobaldNFT] = useState("")
-
+  
  
 
   useEffect(() => {
@@ -29,6 +28,13 @@ const UserState = (props) => {
           if(userAccount==="0xcebFD12bA1e85a797BFdf62081785E9103A96Dd3"){
             setAdmin(true)
           }
+         const isOrg = async()=>{
+          const check = await contract.addressToOrgInfo(userAccount);
+          console.log(check);
+         }
+
+
+
         })
         .catch((err) => {
           setIsConnected(false);
