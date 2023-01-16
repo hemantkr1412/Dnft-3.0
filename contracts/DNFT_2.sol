@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
+contract DNFT is ERC721, ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     
     Counters.Counter private _tokenIdCounter;
@@ -40,9 +40,6 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
     mapping(address=>address[]) public userToOrgs; //For user page
     mapping(address=>uint) public totalRewards;
     
-    //events
-    event TxnInfo(address indexed _sender,address indexed _receiver, bool indexed _isRewarded, bool _isRedeemed);
-   
     //custom errors
     error InvalidOwner(address _address);
     error InvalidUser(address _address);
@@ -120,7 +117,6 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
         userToOrgs[to].push(msg.sender);
         orgToUserInfo[msg.sender][to] = newUser;
         addressToOrgInfo[msg.sender].noOfUsers++;
-        emit TxnInfo(msg.sender, to, _isRewarded, false);
     }
     
     function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
@@ -180,10 +176,9 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
 
             orgToUserReward[msg.sender][_userAddress].push(_noReward);
         }
-        emit TxnInfo(msg.sender, _userAddress , _isRewarded,false);
 } 
 
-    function redeem(address _userAddress,uint _arrId) public onlyOwner{
+    function redeem(address _userAddress,uint _arrId) public {
         if(!addressToOrgInfo[msg.sender].isRegistered){
             revert InvalidOwner(msg.sender);
         }
@@ -201,12 +196,10 @@ contract DNFT_2 is ERC721, ERC721URIStorage, Ownable {
         existingReward.isRedeemed = true;
         userInfo.noOfRewards--;
         totalRewards[_userAddress]--;
-        
-        emit TxnInfo(msg.sender, _userAddress,false,true);
-
   }  
 } 
 
 //hotel symbol input
 //view access to hotel
-//expiry date for no reward N/A0
+//expiry date for no reward N/A
+//0x664f217B4b3d24CC30f1e5a5579031E43413D38b
